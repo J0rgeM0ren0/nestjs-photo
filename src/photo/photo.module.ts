@@ -7,9 +7,27 @@ import { MongoosePhotoRepository } from './infrastructure/adapters/persistence/d
 import { UploadPhotoUseCase } from './application/use-cases/upload-photo.use-case';
 import { GetPhotosUseCase } from './application/use-cases/get-photos.use-case';
 import { DeletePhotoUseCase } from './application/use-cases/delete-photo.use-case';
+import { ClientsModule, Transport } from "@nestjs/microservices";
 
 @Module({
-    imports: [MongooseModule.forFeature([{ name: Photo.name, schema: PhotoSchema }])],
+    imports: [
+        MongooseModule.forFeature([{ name: Photo.name, schema: PhotoSchema }]),
+        ClientsModule.register([
+            {
+                name: 'USER_SERVICE',
+                transport: Transport.KAFKA,
+                options: {
+                    client: {
+                        clientId: 'user',
+                        brokers: ['localhost:9092'],
+                    },
+                    consumer: {
+                        groupId: 'user-consumer',
+                    },
+                },
+            },
+        ]),
+    ],
     controllers: [PhotoController],
     providers: [
         PhotoService,
