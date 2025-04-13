@@ -8,10 +8,16 @@ import { UploadPhotoUseCase } from './application/use-cases/upload-photo.use-cas
 import { GetPhotosUseCase } from './application/use-cases/get-photos.use-case';
 import { DeletePhotoUseCase } from './application/use-cases/delete-photo.use-case';
 import { ClientsModule, Transport } from "@nestjs/microservices";
+import {JwtModule, JwtService} from "@nestjs/jwt";
 
 @Module({
     imports: [
         MongooseModule.forFeature([{ name: Photo.name, schema: PhotoSchema }]),
+        JwtModule.register({
+            global: true,
+            secret: 'test',
+            signOptions: { expiresIn: '1h' },
+        }),
         ClientsModule.register([
             {
                 name: 'USER_SERVICE',
@@ -38,6 +44,7 @@ import { ClientsModule, Transport } from "@nestjs/microservices";
             provide: 'PhotoRepository',
             useClass: MongoosePhotoRepository,
         },
+        JwtService,
     ],
 })
 export class PhotoModule {}

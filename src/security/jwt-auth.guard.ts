@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
+import * as process from "process";
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -25,7 +26,7 @@ export class JwtAuthGuard implements CanActivate {
         }
 
         try {
-            request.user = this.jwtService.verify(token);
+            request.user = this.jwtService.verify(token, {secret: 'test'});
             return true;
         } catch (err) {
             throw new UnauthorizedException('Token invalido o expiro');

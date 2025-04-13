@@ -12,8 +12,7 @@ export class PhotoService {
     ) {}
 
     async create(createPhotoDto: CreatePhotoDto, user: UserPhotoDto): Promise<Photo> {
-        const photo = new this.photoModel({ ...createPhotoDto, user });
-        return photo.save();
+        return this.photoModel.create({ ...createPhotoDto, user });
     }
 
     async findAll(user: UserPhotoDto): Promise<Photo[]> {

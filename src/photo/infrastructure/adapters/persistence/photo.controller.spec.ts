@@ -3,21 +3,9 @@ import { PhotoController } from './photo.controller';
 import { UploadPhotoUseCase } from '../../../application/use-cases/upload-photo.use-case';
 import { GetPhotosUseCase } from '../../../application/use-cases/get-photos.use-case';
 import { DeletePhotoUseCase } from '../../../application/use-cases/delete-photo.use-case';
-import { JwtAuthGuard } from "../../../../security/jwt-auth.guard";
-
 import { CreatePhotoDto } from '../../../application/dto/create-photo.dto';
-import { CanActivate, ExecutionContext } from '@nestjs/common';
-import {APP_GUARD} from "@nestjs/core";
 import {JwtService} from "@nestjs/jwt";
-import {CreatePhoto, userId} from "../../../../../__mocks__/photoMock";
-
-class MockJwtAuthGuard implements CanActivate {
-    canActivate(context: ExecutionContext): boolean {
-        const request = context.switchToHttp().getRequest();
-        request.user = { id: 'user123' };
-        return true;
-    }
-}
+import {createPhoto, userId} from "../../../../../__mocks__/photoMock";
 
 describe('PhotoController', () => {
     let controller: PhotoController;
@@ -56,7 +44,7 @@ describe('PhotoController', () => {
     });
 
     it('should call uploadPhotoUseCase with correct params', async () => {
-        const dto: CreatePhotoDto = CreatePhoto;
+        const dto: CreatePhotoDto = createPhoto;
         const user = userId;
 
         (uploadPhotoUseCase.execute as jest.Mock).mockResolvedValue('photo_uploaded');
@@ -77,7 +65,7 @@ describe('PhotoController', () => {
         expect(getPhotosUseCase.execute).toHaveBeenCalledWith(user);
         expect(result).toEqual(['photo1', 'photo2']);
     });
-    
+
     it('should call deletePhotoUseCase with correct id and user', async () => {
         const user = userId;
         const id = 'photo1';
